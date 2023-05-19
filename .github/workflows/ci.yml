@@ -1,17 +1,22 @@
-name: Super-Linter
+name: Auto Merge Pull Request
 
-on: [push, pull_request]
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
 
 jobs:
-  super-lint:
-    name: Lint code base
+  merge_pull_request:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Run Super-Linter
-        uses: github/super-linter@v4
-        env:
-          DEFAULT_BRANCH: main
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Merge pull request
+        uses: repo-sync/github-sync@v2
+        with:
+          source_branch: ${{ github.head_ref }}
+          target_branch: main
+          github_token: ${{ secrets.GITHUB_TOKEN }}
